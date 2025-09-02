@@ -1,17 +1,12 @@
 // ==========================
 // CONFIG
 // ==========================
-
-// API token will be set from the index input
 let API_TOKEN = "";
-
-// Base API endpoint
 const BASE_URL = "https://api.spacetraders.io/v2";
 
 // ---------------------------
 // TOKEN HANDLING
 // ---------------------------
-
 document.getElementById("tokenForm").addEventListener("submit", (e) => {
   e.preventDefault();
   const tokenInput = document.getElementById("tokenInput").value.trim();
@@ -20,13 +15,11 @@ document.getElementById("tokenForm").addEventListener("submit", (e) => {
   if (tokenInput) {
     API_TOKEN = tokenInput;
     document.getElementById("auth").textContent = `Token set: ${API_TOKEN.slice(0, 10)}...`;
-
     if (remember) localStorage.setItem("spacetraders_token", API_TOKEN);
     else localStorage.removeItem("spacetraders_token");
   }
 });
 
-// Load token from storage if remembered
 window.addEventListener("load", () => {
   const savedToken = localStorage.getItem("spacetraders_token");
   if (savedToken) {
@@ -40,13 +33,8 @@ window.addEventListener("load", () => {
 // ---------------------------
 // GENERIC API CALL
 // ---------------------------
-
 async function callAPI(endpoint, method = "GET", body = null) {
-  if (!API_TOKEN) {
-    console.error("No API token set!");
-    return { error: "No API token set!" };
-  }
-
+  if (!API_TOKEN) return { error: "No API token set!" };
   const options = {
     method,
     headers: {
@@ -58,9 +46,7 @@ async function callAPI(endpoint, method = "GET", body = null) {
 
   try {
     const response = await fetch(`${BASE_URL}${endpoint}`, options);
-    const data = await response.json();
-    console.log(`[${method}] ${endpoint}`, data);
-    return data;
+    return await response.json();
   } catch (err) {
     console.error("API Error:", err);
     return { error: err.message };
@@ -68,114 +54,148 @@ async function callAPI(endpoint, method = "GET", body = null) {
 }
 
 // ---------------------------
-// MINING FUNCTIONS
+// API FUNCTIONS
 // ---------------------------
-
-async function findAsteroid() {
-  return await callAPI("/systems/X1-XD16/waypoints?type=ENGINEERED_ASTEROID");
+async function viewAgent() {
+  const data = await callAPI("/my/agent");
+  document.getElementById("agent").textContent = JSON.stringify(data, null, 2);
 }
 
-async function orbitShip(shipSymbol) {
-  return await callAPI(`/my/ships/${encodeURIComponent(shipSymbol)}/orbit`, "POST");
+async function listShips() {
+  const data = await callAPI("/my/ships");
+  document.getElementById("ships").textContent = JSON.stringify(data, null, 2);
 }
 
-async function navigateToAsteroid(shipSymbol, asteroidSymbol) {
-  return await callAPI(`/my/ships/${encodeURIComponent(shipSymbol)}/navigate`, "POST", {
-    waypointSymbol: asteroidSymbol,
-  });
+async function loadContracts() {
+  const data = await callAPI("/my/contracts");
+  document.getElementById("contracts").textContent = JSON.stringify(data, null, 2);
 }
 
-async function dockShip(shipSymbol) {
-  return await callAPI(`/my/ships/${encodeURIComponent(shipSymbol)}/dock`, "POST");
+async function loadWaypoints(event) {
+  event.preventDefault();
+  const system = document.getElementById("systemInput").value;
+  const data = await callAPI(`/systems/${system}/waypoints`);
+  document.getElementById("waypoints").textContent = JSON.stringify(data, null, 2);
 }
 
-async function refuelShip(shipSymbol) {
-  return await callAPI(`/my/ships/${encodeURIComponent(shipSymbol)}/refuel`, "POST");
+async function findShipyards(event) {
+  event.preventDefault();
+  const system = document.getElementById("shipyardSystemInput").value;
+  const data = await callAPI(`/systems/${system}/shipyards`);
+  document.getElementById("shipyards").textContent = JSON.stringify(data, null, 2);
 }
 
-async function extractOres(shipSymbol) {
-  return await callAPI(`/my/ships/${encodeURIComponent(shipSymbol)}/extract`, "POST");
+async function loadShipyardDetail(event) {
+  event.preventDefault();
+  const system = document.getElementById("detailSystemInput").value;
+  const waypoint = document.getElementById("detailWaypointInput").value;
+  const data = await callAPI(`/systems/${system}/waypoints/${waypoint}/shipyard`);
+  document.getElementById("shipyardDetail").textContent = JSON.stringify(data, null, 2);
 }
 
-async function checkCargo(shipSymbol) {
-  return await callAPI(`/my/ships/${encodeURIComponent(shipSymbol)}/cargo`);
+async function checkCargoHandler(event) {
+  event.preventDefault();
+  const ship = document.getElementById("cargoShipInput").value;
+  const data = await callAPI(`/my/ships/${encodeURIComponent(ship)}/cargo`);
+  document.getElementById("cargo").textContent = JSON.stringify(data, null, 2);
 }
 
-async function jettisonCargo(shipSymbol, cargoSymbol, units = 1) {
-  return await callAPI(`/my/ships/${encodeURIComponent(shipSymbol)}/jettison`, "POST", {
-    symbol: cargoSymbol,
-    units,
-  });
+async function orbitShipHandler(event) {
+  event.preventDefault();
+  const ship = document.getElementById("ctlShipOrbit").value;
+  const data = await callAPI(`/my/ships/${encodeURIComponent(ship)}/orbit`, "POST");
+  document.getElementById("shipControls").textContent = JSON.stringify(data, null, 2);
 }
 
-// ---------------------------
-// MARKET FUNCTIONS
-// ---------------------------
-
-async function viewMarket(systemSymbol, waypointSymbol) {
-  return await callAPI(`/systems/${systemSymbol}/waypoints/${waypointSymbol}/market`);
+async function dockShipHandler(event) {
+  event.preventDefault();
+  const ship = document.getElementById("ctlShipDock").value;
+  const data = await callAPI(`/my/ships/${encodeURIComponent(ship)}/dock`, "POST");
+  document.getElementById("shipControls").textContent = JSON.stringify(data, null, 2);
 }
 
-async function sellCargo(shipSymbol, goodSymbol, units) {
-  return await callAPI(`/my/ships/${encodeURIComponent(shipSymbol)}/sell`, "POST", {
-    symbol: goodSymbol,
-    units,
-  });
+async function refuelShipHandler(event) {
+  event.preventDefault();
+  const ship = document.getElementById("ctlShipRefuel").value;
+  const data = await callAPI(`/my/ships/${encodeURIComponent(ship)}/refuel`, "POST");
+  document.getElementById("shipControls").textContent = JSON.stringify(data, null, 2);
 }
 
-// ---------------------------
-// CONTRACT FUNCTIONS
-// ---------------------------
-
-async function navigateToWaypoint(shipSymbol, waypointSymbol) {
-  return await callAPI(`/my/ships/${encodeURIComponent(shipSymbol)}/navigate`, "POST", {
-    waypointSymbol,
-  });
+async function navigateShipHandler(event) {
+  event.preventDefault();
+  const ship = document.getElementById("ctlShipNavSymbol").value;
+  const waypoint = document.getElementById("ctlShipNavWaypoint").value;
+  const data = await callAPI(`/my/ships/${encodeURIComponent(ship)}/navigate`, "POST", { waypointSymbol: waypoint });
+  document.getElementById("shipControls").textContent = JSON.stringify(data, null, 2);
 }
 
-async function deliverContractGoods(contractId, shipSymbol, goodSymbol, units) {
-  return await callAPI(`/my/contracts/${encodeURIComponent(contractId)}/deliver`, "POST", {
-    shipSymbol,
-    tradeSymbol: goodSymbol,
-    units,
-  });
+async function buyShipHandler(event) {
+  event.preventDefault();
+  const type = document.getElementById("buyShipType").value;
+  const waypoint = document.getElementById("buyWaypoint").value;
+  const data = await callAPI(`/my/shipyards/${waypoint}/purchase`, "POST", { type });
+  document.getElementById("buyOutput").textContent = JSON.stringify(data, null, 2);
 }
 
-async function fulfillContract(contractId) {
-  return await callAPI(`/my/contracts/${encodeURIComponent(contractId)}/fulfill`, "POST");
+async function negotiateContractHandler(event) {
+  event.preventDefault();
+  const ship = document.getElementById("negShipInput").value;
+  const data = await callAPI(`/my/ships/${encodeURIComponent(ship)}/contracts/negotiate`, "POST");
+  document.getElementById("negotiation").textContent = JSON.stringify(data, null, 2);
 }
 
-// ---------------------------
-// DEMO FLOWS
-// ---------------------------
-
-async function miningQuickstart(shipSymbol) {
-  console.log("🚀 Starting Mining Quickstart...");
-
-  const asteroidData = await findAsteroid();
-  const asteroidSymbol = asteroidData.data?.[0]?.symbol || null;
-  console.log("🪨 Found asteroid:", asteroidSymbol);
-
-  if (!asteroidSymbol) return;
-
-  await orbitShip(shipSymbol);
-  await navigateToAsteroid(shipSymbol, asteroidSymbol);
-  await dockShip(shipSymbol);
-  await refuelShip(shipSymbol);
-  await orbitShip(shipSymbol);
-  await extractOres(shipSymbol);
-  const cargo = await checkCargo(shipSymbol);
-  console.log("📦 Cargo:", cargo);
-
-  console.log("✅ Mining cycle complete!");
+async function acceptContractHandler(event) {
+  event.preventDefault();
+  const contract = document.getElementById("contractIdInput").value;
+  const data = await callAPI(`/my/contracts/${encodeURIComponent(contract)}/accept`, "POST");
+  document.getElementById("contracts").textContent = JSON.stringify(data, null, 2);
 }
 
-async function contractDeliveryFlow(shipSymbol, contractId, deliveryWaypoint, goodSymbol, units) {
-  console.log("📦 Starting Contract Delivery...");
+async function miningQuickstartHandler(event) {
+  event.preventDefault();
+  const ship = document.getElementById("miningShipInput").value;
 
-  await navigateToWaypoint(shipSymbol, deliveryWaypoint);
-  await deliverContractGoods(contractId, shipSymbol, goodSymbol, units);
-  await fulfillContract(contractId);
+  const asteroids = await callAPI("/systems/X1-XD16/waypoints?type=ENGINEERED_ASTEROID");
+  const asteroid = asteroids.data?.[0]?.symbol;
+  if (!asteroid) return alert("No asteroid found");
 
-  console.log("✅ Contract delivery complete!");
+  await callAPI(`/my/ships/${encodeURIComponent(ship)}/orbit`, "POST");
+  await callAPI(`/my/ships/${encodeURIComponent(ship)}/navigate`, "POST", { waypointSymbol: asteroid });
+  await callAPI(`/my/ships/${encodeURIComponent(ship)}/dock`, "POST");
+  await callAPI(`/my/ships/${encodeURIComponent(ship)}/refuel`, "POST");
+  await callAPI(`/my/ships/${encodeURIComponent(ship)}/orbit`, "POST");
+  const extracted = await callAPI(`/my/ships/${encodeURIComponent(ship)}/extract`, "POST");
+  const cargo = await callAPI(`/my/ships/${encodeURIComponent(ship)}/cargo`);
+  document.getElementById("miningOutput").textContent = JSON.stringify({ extracted, cargo }, null, 2);
+}
+
+async function contractDeliveryHandler(event) {
+  event.preventDefault();
+  const ship = document.getElementById("deliveryShipInput").value;
+  const contract = document.getElementById("deliveryContractInput").value;
+  const waypoint = document.getElementById("deliveryWaypointInput").value;
+  const good = document.getElementById("deliveryGoodInput").value;
+  const units = Number(document.getElementById("deliveryUnitsInput").value);
+
+  await callAPI(`/my/ships/${encodeURIComponent(ship)}/navigate`, "POST", { waypointSymbol: waypoint });
+  await callAPI(`/my/contracts/${encodeURIComponent(contract)}/deliver`, "POST", { shipSymbol: ship, tradeSymbol: good, units });
+  await callAPI(`/my/contracts/${encodeURIComponent(contract)}/fulfill`, "POST");
+  document.getElementById("deliveryOutput").textContent = `Contract ${contract} delivered.`;
+}
+
+async function viewMarketHandler(event) {
+  event.preventDefault();
+  const system = document.getElementById("marketSystemInput").value;
+  const waypoint = document.getElementById("marketWaypointInput").value;
+  const data = await callAPI(`/systems/${system}/waypoints/${waypoint}/market`);
+  document.getElementById("marketOutput").textContent = JSON.stringify(data, null, 2);
+}
+
+async function sellGoodsHandler(event) {
+  event.preventDefault();
+  const ship = document.getElementById("sellShipInput").value;
+  const good = document.getElementById("sellGoodInput").value;
+  const units = Number(document.getElementById("sellUnitsInput").value);
+  const data = await callAPI(`/my/ships/${encodeURIComponent(ship)}/sell`, "POST", { symbol: good, units });
+  document.getElementById("sellOutput").textContent = JSON.stringify(data, null, 2);
 }

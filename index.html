@@ -23,13 +23,13 @@
 
 <!-- Agent Info -->
 <div class="terminal-box">
-  <button onclick="loadAgent()">Load Agent Info</button>
+  <button onclick="viewAgent()">Load Agent Info</button>
   <pre id="agent">Agent info will appear here.</pre>
 </div>
 
 <!-- Ships -->
 <div class="terminal-box">
-  <button onclick="loadShips()">Load My Ships</button>
+  <button onclick="listShips()">Load My Ships</button>
   <pre id="ships">Ships info will appear here.</pre>
 </div>
 
@@ -72,7 +72,7 @@
 
 <!-- Cargo -->
 <div class="terminal-box">
-  <form onsubmit="loadCargo(event)">
+  <form onsubmit="checkCargoHandler(event)">
     <label>Ship Symbol:</label>
     <input type="text" id="cargoShipInput" placeholder="Ship symbol">
     <button type="submit">View Cargo</button>
@@ -82,25 +82,25 @@
 
 <!-- Ship Controls -->
 <div class="terminal-box">
-  <form onsubmit="shipOrbit(event)">
+  <form onsubmit="orbitShipHandler(event)">
     <label>Orbit Ship Symbol:</label>
     <input type="text" id="ctlShipOrbit" placeholder="Ship symbol">
     <button type="submit">Orbit</button>
   </form>
 
-  <form onsubmit="shipDock(event)">
+  <form onsubmit="dockShipHandler(event)">
     <label>Dock Ship Symbol:</label>
     <input type="text" id="ctlShipDock" placeholder="Ship symbol">
     <button type="submit">Dock</button>
   </form>
 
-  <form onsubmit="shipRefuel(event)">
+  <form onsubmit="refuelShipHandler(event)">
     <label>Refuel Ship Symbol:</label>
     <input type="text" id="ctlShipRefuel" placeholder="Ship symbol">
     <button type="submit">Refuel</button>
   </form>
 
-  <form onsubmit="shipNavigate(event)">
+  <form onsubmit="navigateShipHandler(event)">
     <label>Navigate Ship Symbol:</label>
     <input type="text" id="ctlShipNavSymbol" placeholder="Ship symbol">
     <label>Destination Waypoint:</label>
@@ -113,7 +113,7 @@
 
 <!-- Buy Ships -->
 <div class="terminal-box">
-  <form onsubmit="buyShip(event)">
+  <form onsubmit="buyShipHandler(event)">
     <label>Ship Type:</label>
     <input type="text" id="buyShipType" placeholder="e.g. SHIP_MINING_DRONE">
     <label>Waypoint Symbol:</label>
@@ -125,14 +125,14 @@
 
 <!-- Negotiate & Accept Contracts -->
 <div class="terminal-box">
-  <form onsubmit="negotiateContract(event)">
+  <form onsubmit="negotiateContractHandler(event)">
     <label>Ship Symbol:</label>
     <input type="text" id="negShipInput" placeholder="Ship symbol">
     <button type="submit">Negotiate Contract</button>
   </form>
   <pre id="negotiation">Negotiation output here.</pre>
 
-  <form onsubmit="acceptContract(event)">
+  <form onsubmit="acceptContractHandler(event)">
     <label>Contract ID:</label>
     <input type="text" id="contractIdInput" placeholder="Contract ID">
     <button type="submit">Accept Contract</button>
@@ -141,7 +141,7 @@
 
 <!-- Mining Quickstart -->
 <div class="terminal-box">
-  <form onsubmit="startMining(event)">
+  <form onsubmit="miningQuickstartHandler(event)">
     <label>Ship Symbol:</label>
     <input type="text" id="miningShipInput" placeholder="Ship symbol">
     <button type="submit">Start Mining Quickstart</button>
@@ -151,7 +151,7 @@
 
 <!-- Contract Delivery -->
 <div class="terminal-box">
-  <form onsubmit="startContractDelivery(event)">
+  <form onsubmit="contractDeliveryHandler(event)">
     <label>Ship Symbol:</label>
     <input type="text" id="deliveryShipInput" placeholder="Ship symbol">
     <label>Contract ID:</label>
@@ -169,7 +169,7 @@
 
 <!-- Market & Selling -->
 <div class="terminal-box">
-  <form onsubmit="viewMarketData(event)">
+  <form onsubmit="viewMarketHandler(event)">
     <label>System Symbol:</label>
     <input type="text" id="marketSystemInput" placeholder="e.g. X1-XD16">
     <label>Waypoint Symbol:</label>
@@ -180,7 +180,7 @@
 </div>
 
 <div class="terminal-box">
-  <form onsubmit="sellGoods(event)">
+  <form onsubmit="sellGoodsHandler(event)">
     <label>Ship Symbol:</label>
     <input type="text" id="sellShipInput" placeholder="Ship symbol">
     <label>Good Symbol:</label>
