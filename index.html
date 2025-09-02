@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SpaceTraders Terminal</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>🚀 SpaceTraders Mining & Contracts Terminal</h1>
+
+<!-- Token -->
+<div class="terminal-box">
+  <form id="tokenForm">
+    <label>API Token:</label>
+    <input type="text" id="tokenInput" placeholder="Paste your token here">
+    <label><input type="checkbox" id="rememberToken"> Remember token</label>
+    <button type="submit">Set Token</button>
+  </form>
+  <pre id="auth">No token set.</pre>
+</div>
+
+<!-- Agent Info -->
+<div class="terminal-box">
+  <button onclick="loadAgent()">Load Agent Info</button>
+  <pre id="agent">Agent info will appear here.</pre>
+</div>
+
+<!-- Ships -->
+<div class="terminal-box">
+  <button onclick="loadShips()">Load My Ships</button>
+  <pre id="ships">Ships info will appear here.</pre>
+</div>
+
+<!-- Contracts -->
+<div class="terminal-box">
+  <button onclick="loadContracts()">Load Contracts</button>
+  <pre id="contracts">Contracts info will appear here.</pre>
+</div>
+
+<!-- Waypoints -->
+<div class="terminal-box">
+  <form onsubmit="loadWaypoints(event)">
+    <label>System Symbol:</label>
+    <input type="text" id="systemInput" placeholder="e.g. X1-XD16">
+    <button type="submit">Load Waypoints</button>
+  </form>
+  <pre id="waypoints">Waypoints will appear here.</pre>
+</div>
+
+<!-- Shipyards -->
+<div class="terminal-box">
+  <form onsubmit="findShipyards(event)">
+    <label>System Symbol:</label>
+    <input type="text" id="shipyardSystemInput" placeholder="e.g. X1-XD16">
+    <button type="submit">Find Shipyards</button>
+  </form>
+  <pre id="shipyards">Shipyards info will appear here.</pre>
+</div>
+
+<div class="terminal-box">
+  <form onsubmit="loadShipyardDetail(event)">
+    <label>System Symbol:</label>
+    <input type="text" id="detailSystemInput" placeholder="e.g. X1-XD16">
+    <label>Waypoint Symbol:</label>
+    <input type="text" id="detailWaypointInput" placeholder="e.g. X1-XD16-H56">
+    <button type="submit">View Shipyard Details</button>
+  </form>
+  <pre id="shipyardDetail">Shipyard details will appear here.</pre>
+</div>
+
+<!-- Cargo -->
+<div class="terminal-box">
+  <form onsubmit="loadCargo(event)">
+    <label>Ship Symbol:</label>
+    <input type="text" id="cargoShipInput" placeholder="Ship symbol">
+    <button type="submit">View Cargo</button>
+  </form>
+  <pre id="cargo">Cargo info will appear here.</pre>
+</div>
+
+<!-- Ship Controls -->
+<div class="terminal-box">
+  <form onsubmit="shipOrbit(event)">
+    <label>Orbit Ship Symbol:</label>
+    <input type="text" id="ctlShipOrbit" placeholder="Ship symbol">
+    <button type="submit">Orbit</button>
+  </form>
+
+  <form onsubmit="shipDock(event)">
+    <label>Dock Ship Symbol:</label>
+    <input type="text" id="ctlShipDock" placeholder="Ship symbol">
+    <button type="submit">Dock</button>
+  </form>
+
+  <form onsubmit="shipRefuel(event)">
+    <label>Refuel Ship Symbol:</label>
+    <input type="text" id="ctlShipRefuel" placeholder="Ship symbol">
+    <button type="submit">Refuel</button>
+  </form>
+
+  <form onsubmit="shipNavigate(event)">
+    <label>Navigate Ship Symbol:</label>
+    <input type="text" id="ctlShipNavSymbol" placeholder="Ship symbol">
+    <label>Destination Waypoint:</label>
+    <input type="text" id="ctlShipNavWaypoint" placeholder="Waypoint symbol">
+    <button type="submit">Navigate</button>
+  </form>
+
+  <pre id="shipControls">Ship controls output.</pre>
+</div>
+
+<!-- Buy Ships -->
+<div class="terminal-box">
+  <form onsubmit="buyShip(event)">
+    <label>Ship Type:</label>
+    <input type="text" id="buyShipType" placeholder="e.g. SHIP_MINING_DRONE">
+    <label>Waypoint Symbol:</label>
+    <input type="text" id="buyWaypoint" placeholder="e.g. X1-XD16-H56">
+    <button type="submit">Buy Ship</button>
+  </form>
+  <pre id="buyOutput">Buy ship output here.</pre>
+</div>
+
+<!-- Negotiate & Accept Contracts -->
+<div class="terminal-box">
+  <form onsubmit="negotiateContract(event)">
+    <label>Ship Symbol:</label>
+    <input type="text" id="negShipInput" placeholder="Ship symbol">
+    <button type="submit">Negotiate Contract</button>
+  </form>
+  <pre id="negotiation">Negotiation output here.</pre>
+
+  <form onsubmit="acceptContract(event)">
+    <label>Contract ID:</label>
+    <input type="text" id="contractIdInput" placeholder="Contract ID">
+    <button type="submit">Accept Contract</button>
+  </form>
+</div>
+
+<!-- Mining Quickstart -->
+<div class="terminal-box">
+  <form onsubmit="startMining(event)">
+    <label>Ship Symbol:</label>
+    <input type="text" id="miningShipInput" placeholder="Ship symbol">
+    <button type="submit">Start Mining Quickstart</button>
+  </form>
+  <pre id="miningOutput">Mining output will appear here.</pre>
+</div>
+
+<!-- Contract Delivery -->
+<div class="terminal-box">
+  <form onsubmit="startContractDelivery(event)">
+    <label>Ship Symbol:</label>
+    <input type="text" id="deliveryShipInput" placeholder="Ship symbol">
+    <label>Contract ID:</label>
+    <input type="text" id="deliveryContractInput" placeholder="Contract ID">
+    <label>Delivery Waypoint:</label>
+    <input type="text" id="deliveryWaypointInput" placeholder="Waypoint symbol">
+    <label>Good Symbol:</label>
+    <input type="text" id="deliveryGoodInput" placeholder="e.g. IRON_ORE">
+    <label>Units:</label>
+    <input type="number" id="deliveryUnitsInput" placeholder="Units">
+    <button type="submit">Run Contract Delivery</button>
+  </form>
+  <pre id="deliveryOutput">Delivery output will appear here.</pre>
+</div>
+
+<!-- Market & Selling -->
+<div class="terminal-box">
+  <form onsubmit="viewMarketData(event)">
+    <label>System Symbol:</label>
+    <input type="text" id="marketSystemInput" placeholder="e.g. X1-XD16">
+    <label>Waypoint Symbol:</label>
+    <input type="text" id="marketWaypointInput" placeholder="e.g. X1-XD16-A1">
+    <button type="submit">View Market</button>
+  </form>
+  <pre id="marketOutput">Market data here.</pre>
+</div>
+
+<div class="terminal-box">
+  <form onsubmit="sellGoods(event)">
+    <label>Ship Symbol:</label>
+    <input type="text" id="sellShipInput" placeholder="Ship symbol">
+    <label>Good Symbol:</label>
+    <input type="text" id="sellGoodInput" placeholder="e.g. IRON_ORE">
+    <label>Units:</label>
+    <input type="number" id="sellUnitsInput" placeholder="Units">
+    <button type="submit">Sell Goods</button>
+  </form>
+  <pre id="sellOutput">Sell goods output here.</pre>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
